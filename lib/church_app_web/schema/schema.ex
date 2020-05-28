@@ -127,7 +127,7 @@ defmodule ChurchAppWeb.Schema do
       arg(:position, non_null(:string))
       arg(:profile_image, :string)
       arg(:church_id, non_null(:string))
-      arg(:order, non_null(:string))
+      arg(:order, non_null(:integer))
 
       resolve(&Resolvers.Accounts.create_employee/3)
     end
@@ -139,7 +139,7 @@ defmodule ChurchAppWeb.Schema do
       arg(:position, non_null(:string))
       arg(:profile_image, :string)
       arg(:church_id, non_null(:string))
-      arg(:order, non_null(:string))
+      arg(:order, non_null(:integer))
 
       resolve(&Resolvers.Accounts.update_employee/3)
     end
@@ -150,6 +150,31 @@ defmodule ChurchAppWeb.Schema do
       arg(:church_id, non_null(:string))
 
       resolve(&Resolvers.Accounts.delete_employee/3)
+    end
+
+    @desc "Create news"
+    field :create_news, :news do
+      arg(:church_id, non_null(:string))
+      arg(:content, non_null(:string))
+
+      resolve(&Resolvers.Accounts.create_news/3)
+    end
+
+    @desc "Update news"
+    field :update_news, :news do
+      arg(:id, non_null(:id))
+      arg(:church_id, non_null(:string))
+      arg(:content, non_null(:string))
+
+      resolve(&Resolvers.Accounts.update_news/3)
+    end
+
+    @desc "Delete news"
+    field :delete_news, :news do
+      arg(:id, non_null(:id))
+      arg(:church_id, non_null(:string))
+
+      resolve(&Resolvers.Accounts.delete_news/3)
     end
   end
 

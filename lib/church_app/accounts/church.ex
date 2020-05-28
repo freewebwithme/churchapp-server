@@ -2,7 +2,7 @@ defmodule ChurchApp.Accounts.Church do
   use Ecto.Schema
   import Ecto.Changeset
   alias ChurchApp.Videos.LatestVideos
-  alias ChurchApp.Accounts.{StripeUser, Employee, Schedule}
+  alias ChurchApp.Accounts.{StripeUser, Employee, Schedule, News}
 
   schema "churches" do
     field :name, :string
@@ -19,6 +19,7 @@ defmodule ChurchApp.Accounts.Church do
     has_many :latest_videos, LatestVideos
     has_many :stripe_users, StripeUser
     has_many :employees, Employee
+    has_many :news, News
 
     timestamps()
   end

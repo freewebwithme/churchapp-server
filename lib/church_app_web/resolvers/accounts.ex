@@ -1,5 +1,6 @@
 defmodule ChurchAppWeb.Resolvers.Accounts do
   alias ChurchApp.Accounts
+  alias ChurchApp.Utility
 
   def me(_, _, %{context: %{current_user: user}}) do
     IO.puts("Found a user")
@@ -56,6 +57,18 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
 
   def delete_employee(_, arg, _) do
     Accounts.delete_employee(arg)
+  end
+
+  def create_news(_, args, _) do
+    Accounts.create_news(args)
+  end
+
+  def update_news(_, args, _) do
+    Accounts.update_news(args)
+  end
+
+  def delete_news(_, args, _) do
+    Accounts.delete_news(args)
   end
 
   def delete_slide_image(_, %{slider_number: slider_number, user_id: user_id}, _) do

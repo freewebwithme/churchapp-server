@@ -7,7 +7,7 @@ defmodule ChurchApp.Accounts do
   alias ChurchApp.Repo
 
   alias ChurchApp.Accounts.Church
-  alias ChurchApp.Accounts.{User, StripeUser, Employee}
+  alias ChurchApp.Accounts.{User, StripeUser, Employee, News}
   alias ChurchApp.Utility
   alias ChurchApp.Videos
 
@@ -157,6 +157,9 @@ defmodule ChurchApp.Accounts do
     {church_id, ""} = Integer.parse(church_id)
 
     with true <- employee.church_id == church_id do
+      # Delete Profile image from amazon s3
+      bucket_name = Utility.get_bucket_name()
+      Utility.delete_file_from_s3(bucket_name, employee.profile_image)
       Repo.delete(employee)
     else
       false ->
@@ -170,6 +173,40 @@ defmodule ChurchApp.Accounts do
 
   def change_church(%Church{} = church) do
     Church.changeset(church, %{})
+  end
+
+  def create_news(attrs) do
+    %News{}
+    |> News.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_news(attrs) do
+    %{church_id: church_id, id: news_id, content: _content} = attrs
+    news = Repo.get_by(News, id: news_id)
+    {church_id, ""} = Integer.parse(church_id)
+
+    with true <- news.church_id == church_id do
+      news
+      |> News.changeset(attrs)
+      |> Repo.update()
+    else
+      false ->
+        {:error, "정보를 수정할 수가 없습니다."}
+    end
+  end
+
+  def delete_news(attrs) do
+    %{church_id: church_id, id: news_id} = attrs
+    news = Repo.get_by(News, id: news_id)
+    {church_id, ""} = Integer.parse(church_id)
+
+    with true <- news.church_id == church_id do
+      Repo.delete(news)
+    else
+      false ->
+        {:error, "정보를 수정할 수가 없습니다."}
+    end
   end
 
   def delete_slide_image(user_id, slider_number) do

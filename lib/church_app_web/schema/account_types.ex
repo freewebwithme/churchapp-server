@@ -50,6 +50,21 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     end
 
     field :order, :integer
+    field :church_id, :string
+  end
+
+  object :news do
+    field :id, :id
+    field :content, :string
+    field :church_id, :string
+
+    field :created_at, :string do
+      resolve(fn parent, _, _ ->
+        inserted_at = Map.get(parent, :inserted_at)
+        {:ok, formatted_date} = Utility.format_datetime(inserted_at)
+        {:ok, formatted_date}
+      end)
+    end
   end
 
   object :latest_videos do
