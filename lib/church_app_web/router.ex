@@ -45,6 +45,12 @@ defmodule ChurchAppWeb.Router do
     post "/upload", SlideimageController, :upload
   end
 
+  scope "/profile-image", ChurchAppWeb do
+    pipe_through(:api)
+
+    post "/upload", ProfileImageUploadController, :upload
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ChurchAppWeb do
   #   pipe_through :api

@@ -1,6 +1,6 @@
 defmodule ChurchAppWeb.Schema.AccountTypes do
   use Absinthe.Schema.Notation
-  alias ChurchApp.{Accounts}
+  alias ChurchApp.{Accounts, Utility}
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
@@ -40,7 +40,15 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :id, :id
     field :name, :string
     field :position, :string
-    field :profile_image, :string
+
+    field :profile_image, :string do
+      resolve(fn parent, _, _ ->
+        # S3 key name (not a full url)
+        profile_image = Map.get(parent, :profile_image)
+        {:ok, Utility.build_image_url(profile_image)}
+      end)
+    end
+
     field :order, :integer
   end
 

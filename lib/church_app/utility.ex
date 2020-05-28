@@ -44,6 +44,12 @@ defmodule ChurchApp.Utility do
     s3_filename
   end
 
+  def create_s3_file_name_for_employee(file_extension, church_id, employee_id) do
+    file_uuid = UUID.uuid4(:hex)
+    s3_filename = "#{church_id}/#{employee_id}/#{file_uuid}#{file_extension}"
+    s3_filename
+  end
+
   def build_image_url(filename) do
     bucket_name = get_bucket_name()
     region = System.get_env("AWS_REGION")

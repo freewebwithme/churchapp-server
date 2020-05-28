@@ -101,16 +101,20 @@ defmodule ChurchApp.Accounts do
     Repo.update(church_changeset)
   end
 
+  def get_employee_by_id(church_id, employee_id) do
+    query = from e in Employee, where: e.church_id == ^church_id and e.id == ^employee_id
+    Repo.one(query)
+  end
+
   def create_employee(attrs) do
     %{profile_image: profile_image} = attrs
     # Add default profile image
     attrs =
-      with true <- is_nil(profile_image),
-           0 <- String.length(profile_image) do
+      with true <- is_nil(profile_image) do
         Map.put(
           attrs,
           :profile_image,
-          "https://churchapp-la.s3-us-west-1.amazonaws.com/default-avatar.jpg"
+          "default-avatar.jpg"
         )
       else
         _ ->
@@ -120,6 +124,12 @@ defmodule ChurchApp.Accounts do
     %Employee{}
     |> Employee.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def update_employee_profile_image(employee, profile_image) do
+    employee
+    |> Employee.changeset(%{profile_image: profile_image})
+    |> Repo.update()
   end
 
   def update_employee(attrs) do
