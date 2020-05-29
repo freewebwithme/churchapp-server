@@ -50,7 +50,7 @@ alias ChurchApp.Api.YoutubeApi
 alias ChurchApp.Youtube
 alias ChurchApp.Videos.LatestVideos
 alias ChurchApp.{Videos, Accounts}
-alias ChurchApp.Accounts.{User}
+alias ChurchApp.Accounts.{User, Employee, News}
 alias ChurchApp.Utility
 
 channel_id = "UC-R1QgG_g_hRrTsNxqyW1aw"

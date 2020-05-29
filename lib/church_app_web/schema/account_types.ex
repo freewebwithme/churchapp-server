@@ -2,7 +2,7 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
   use Absinthe.Schema.Notation
   alias ChurchApp.{Accounts, Utility}
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   object :user do
     field :id, :id
@@ -22,13 +22,39 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :address_line_two, :string
     field :phone_number, :string
     field :email, :string
-    field :schedules, list_of(:schedule)
+
+    field :schedules, list_of(:schedule) do
+      resolve(fn parent, _, _ ->
+        schedules = Map.get(parent, :schedules)
+        {:ok, Enum.sort_by(schedules, & &1.order)}
+      end)
+    end
 
     field :user, :user
 
     field :latest_videos, list_of(:latest_videos)
-    field :employees, list_of(:employee), resolve: dataloader(Accounts)
-    field :news, list_of(:news), resolve: dataloader(Accounts)
+
+    field :employees, list_of(:employee) do
+      resolve(fn parent, _, %{context: %{loader: loader}} ->
+        loader
+        |> Dataloader.load(Accounts, :employees, parent)
+        |> on_load(fn loader ->
+          employees = Dataloader.get(loader, Accounts, :employees, parent)
+          {:ok, Enum.sort_by(employees, & &1.order)}
+        end)
+      end)
+    end
+
+    field :news, list_of(:news) do
+      resolve(fn parent, _args, %{context: %{loader: loader}} ->
+        loader
+        |> Dataloader.load(Accounts, :news, parent)
+        |> on_load(fn loader ->
+          news = Dataloader.get(loader, Accounts, :news, parent)
+          {:ok, Enum.sort_by(news, & &1.inserted_at, :desc)}
+        end)
+      end)
+    end
   end
 
   object :schedule do

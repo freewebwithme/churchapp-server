@@ -1,6 +1,5 @@
 defmodule ChurchAppWeb.Resolvers.Accounts do
   alias ChurchApp.Accounts
-  alias ChurchApp.Utility
 
   def me(_, _, %{context: %{current_user: user}}) do
     IO.puts("Found a user")
