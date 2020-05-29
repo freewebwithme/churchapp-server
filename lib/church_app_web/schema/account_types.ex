@@ -28,6 +28,7 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
 
     field :latest_videos, list_of(:latest_videos)
     field :employees, list_of(:employee), resolve: dataloader(Accounts)
+    field :news, list_of(:news), resolve: dataloader(Accounts)
   end
 
   object :schedule do
