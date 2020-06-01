@@ -46,6 +46,8 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     end
 
     field :news, list_of(:news) do
+      # Manually call on_load instead of dataloader function
+      # Because I need to order by date desc
       resolve(fn parent, _args, %{context: %{loader: loader}} ->
         loader
         |> Dataloader.load(Accounts, :news, parent)

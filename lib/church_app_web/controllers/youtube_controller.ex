@@ -1,4 +1,8 @@
 defmodule ChurchAppWeb.YoutubeController do
+  @moduledoc """
+  set up notification.
+  https://developers.google.com/youtube/v3/guides/push_notifications
+  """
   use ChurchAppWeb, :controller
   alias ChurchApp.Videos
   alias ChurchApp.Accounts
@@ -25,7 +29,7 @@ defmodule ChurchAppWeb.YoutubeController do
 
   So Up to date vidoes on the list.
   """
-  def handle_upload_notification(conn, params) do
+  def handle_upload_notification(conn, _params) do
     # Catch xml body from conn
     {:ok, body, _conn} = Plug.Conn.read_body(conn)
     IO.inspect(body)

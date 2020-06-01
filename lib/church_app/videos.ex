@@ -107,7 +107,11 @@ defmodule ChurchApp.Videos do
 
   def get_most_recent_videos_from_youtube(church) do
     {:ok, response} = Youtube.search_videos(church.channel_id, "snippet", "", "date", 25, "")
-    {_rows, videos} = build_videos_from_response(response, church.id) |> insert_all_latest_videos
+
+    {_rows, videos} =
+      build_videos_from_response(response, church.id)
+      |> insert_all_latest_videos
+
     videos
   end
 
