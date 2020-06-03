@@ -16,14 +16,28 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
         {:ok, %{user: user, token: token}}
 
       :error ->
-        {:error, "로그인 도중에 문제가 발생했습니다."}
+        {:error, "로그인 할 수 없습니다. 이메일과 패스워드를 확인하세요"}
     end
   end
 
   def sign_up(_, args, _) do
-    with {:ok, user} <- Accounts.create_user(args) do
-      token = ChurchAppWeb.AuthToken.sign(user)
-      {:ok, %{user: user, token: token}}
+    # Before creating new user, check recaptcha value
+    # to check if bot is not.
+    %{recaptcha_value: value} = args
+
+    case Recaptcha.verify(value) do
+      {:ok, _response} ->
+        IO.puts("Recaptcha is verified")
+
+        with {:ok, user} <- Accounts.create_user(args) do
+          # Verify recaptcha value
+          token = ChurchAppWeb.AuthToken.sign(user)
+          {:ok, %{user: user, token: token}}
+        end
+
+      _ ->
+        IO.puts("Recaptcha is not verified")
+        {:error, "가입할 수 없습니다.  다시 시도하세요"}
     end
   end
 

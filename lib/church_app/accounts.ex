@@ -243,6 +243,9 @@ defmodule ChurchApp.Accounts do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    # I need to set church to nil or not,
+    # It will raise :church is not loaded error on sign up
+    |> Ecto.Changeset.put_assoc(:church, nil)
     |> Repo.insert()
   end
 

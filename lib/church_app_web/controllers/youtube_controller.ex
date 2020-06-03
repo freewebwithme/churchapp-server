@@ -32,11 +32,11 @@ defmodule ChurchAppWeb.YoutubeController do
   def handle_upload_notification(conn, _params) do
     # Catch xml body from conn
     {:ok, body, _conn} = Plug.Conn.read_body(conn)
-    IO.inspect(body)
 
     # convert raw xml to map
     converted_body = XmlToMap.naive_map(body)
-
+    IO.puts("Inspecting converted conn.body")
+    IO.inspect(converted_body)
     # pattern match for channel Id
     %{
       "feed" => %{
@@ -52,8 +52,7 @@ defmodule ChurchAppWeb.YoutubeController do
     # delete current latest videos
     Videos.delete_all_latest_videos(church.id)
     # get new latest videos
-    videos = Videos.get_most_recent_videos_from_youtube(church)
-    IO.inspect(videos)
+    Videos.get_most_recent_videos_from_youtube(church)
 
     send_resp(conn, 200, "")
   end

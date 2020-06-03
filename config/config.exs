@@ -27,6 +27,11 @@ config :ex_aws,
 
 config :stripity_stripe, api_key: fn -> System.get_env("STRIPE_SECRET") end
 
+config :recaptcha,
+  public_key: {:system, "RECAPTCHA_PUBLIC_KEY"},
+  secret: {:system, "RECAPTCHA_PRIVATE_KEY"},
+  json_library: Jason
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

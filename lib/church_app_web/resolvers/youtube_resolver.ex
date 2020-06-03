@@ -1,5 +1,5 @@
 defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
-  alias ChurchApp.{Youtube, Videos}
+  alias ChurchApp.{Youtube, Videos, Accounts}
   alias ChurchApp.Response.{VideoSearchResponse, VideoSearchResult}
   alias ChurchApp.Utility
 
@@ -105,5 +105,25 @@ defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
     }
 
     {:ok, new_playlist_items_response}
+  end
+
+  def refetch_latest_videos(_, %{church_id: church_id, user_id: user_id}, _) do
+    # Check if user's church id and request church_id is matching
+    IO.puts("Calling refetch latest videos")
+    church = Accounts.get_church_by_id(church_id)
+    IO.inspect(church.user_id)
+    IO.inspect(user_id)
+
+    case church.user_id == String.to_integer(user_id) do
+      true ->
+        IO.puts("Deleting videos......")
+        # Matched! Refresh youtube videos
+        Videos.delete_all_latest_videos(church.id)
+        videos = Videos.get_most_recent_videos_from_youtube(church)
+        {:ok, videos}
+
+      _ ->
+        {:error, "영상을 불러오는 중에 문제가 발생했습니다.  다시 시도하세요"}
+    end
   end
 end

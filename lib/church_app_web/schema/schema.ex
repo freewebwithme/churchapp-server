@@ -67,6 +67,7 @@ defmodule ChurchAppWeb.Schema do
       arg(:email, :string)
       arg(:password, :string)
       arg(:name, :string)
+      arg(:recaptcha_value, non_null(:string))
       resolve(&Resolvers.Accounts.sign_up/3)
     end
 
@@ -175,6 +176,14 @@ defmodule ChurchAppWeb.Schema do
       arg(:church_id, non_null(:string))
 
       resolve(&Resolvers.Accounts.delete_news/3)
+    end
+
+    @desc "Refetch Latest videos from YouTube"
+    field :refetch_latest_videos, list_of(:latest_videos) do
+      arg(:church_id, non_null(:string))
+      arg(:user_id, non_null(:string))
+
+      resolve(&Resolvers.YoutubeResolver.refetch_latest_videos/3)
     end
   end
 

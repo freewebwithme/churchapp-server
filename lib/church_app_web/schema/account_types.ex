@@ -2,7 +2,7 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
   use Absinthe.Schema.Notation
   alias ChurchApp.{Accounts, Utility}
 
-  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+  import Absinthe.Resolution.Helpers, only: [on_load: 2, dataloader: 1]
 
   object :user do
     field :id, :id
@@ -26,13 +26,29 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :schedules, list_of(:schedule) do
       resolve(fn parent, _, _ ->
         schedules = Map.get(parent, :schedules)
-        {:ok, Enum.sort_by(schedules, & &1.order)}
+
+        case is_nil(schedules) do
+          true ->
+            {:ok, schedules}
+
+          _ ->
+            {:ok, Enum.sort_by(schedules, & &1.order)}
+        end
       end)
     end
 
     field :user, :user
 
-    field :latest_videos, list_of(:latest_videos)
+    field :latest_videos, list_of(:latest_videos) do
+      resolve(fn parent, _, %{context: %{loader: loader}} ->
+        loader
+        |> Dataloader.load(Accounts, :latest_videos, parent)
+        |> on_load(fn loader ->
+          latest_videos = Dataloader.get(loader, Accounts, :latest_videos, parent)
+          {:ok, Enum.sort_by(latest_videos, & &1.id, :asc)}
+        end)
+      end)
+    end
 
     field :employees, list_of(:employee) do
       resolve(fn parent, _, %{context: %{loader: loader}} ->

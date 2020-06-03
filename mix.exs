@@ -62,7 +62,8 @@ defmodule ChurchApp.MixProject do
       {:sweet_xml, "~>0.6"},
       {:elixir_xml_to_map, "~> 1.0"},
       {:stripity_stripe, "~> 2.8", override: true},
-      {:dataloader, "~> 1.0.0"}
+      {:dataloader, "~> 1.0.0"},
+      {:recaptcha, "~> 3.0", override: true}
     ]
   end
 
