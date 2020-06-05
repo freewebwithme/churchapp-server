@@ -3,5 +3,6 @@ defmodule ChurchApp.Response.Playlist do
             playlist_id: nil,
             playlist_title: nil,
             description: nil,
-            thumbnail_url: nil
+            thumbnail_url: nil,
+            published_at: nil
 end

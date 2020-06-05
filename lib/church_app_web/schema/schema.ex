@@ -37,6 +37,12 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.YoutubeResolver.search_videos/3)
     end
 
+    # TODO: Do this for live streaming
+    @desc "Get live streaming video"
+    field :get_live_streaming, :video_search_response do
+      arg(:channel_id, non_null(:string))
+    end
+
     @desc "Get all playlists"
     field :playlists, list_of(:playlist) do
       arg(:channel_id, :string)

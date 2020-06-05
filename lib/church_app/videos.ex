@@ -122,7 +122,8 @@ defmodule ChurchApp.Videos do
         playlist_title: playlist.snippet.title,
         description: playlist.snippet.description,
         thumbnail_url: Utility.get_thumbnail_url(playlist),
-        playlist_id: playlist.id
+        playlist_id: playlist.id,
+        published_at: playlist.snippet.publishedAt
       }
     end)
   end

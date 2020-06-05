@@ -4,7 +4,6 @@ defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
   alias ChurchApp.Utility
 
   @doc """
-  Return 10 most recent videos from channel for HomeScreen.
   """
   def search_videos(
         _,
@@ -69,6 +68,8 @@ defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
 
   def get_all_playlists(_, %{channel_id: channel_id}, _) do
     playlists = Videos.get_all_playlists(channel_id)
+    IO.puts("Printing playlist")
+    IO.inspect(playlists)
     {:ok, playlists}
   end
 
