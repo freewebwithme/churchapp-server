@@ -63,7 +63,8 @@ defmodule ChurchApp.MixProject do
       {:elixir_xml_to_map, "~> 1.0"},
       {:stripity_stripe, "~> 2.8", override: true},
       {:dataloader, "~> 1.0.0"},
-      {:recaptcha, "~> 3.0", override: true}
+      {:recaptcha, "~> 3.0", override: true},
+      {:one_signal, git: "https://github.com/freewebwithme/one_signal.git"}
     ]
   end
 
