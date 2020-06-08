@@ -17,9 +17,6 @@ defmodule ChurchAppWeb.Plugs.SetCurrentUser do
          {:ok, %{id: id}} <- ChurchAppWeb.AuthToken.verify(token),
          %{} = user <- ChurchApp.Accounts.get_user(id) do
       IO.puts("User has bearer token in context")
-      user2 = ChurchApp.Accounts.get_user(5)
-      IO.inspect(user2)
-      IO.inspect(token)
 
       %{current_user: user}
     else

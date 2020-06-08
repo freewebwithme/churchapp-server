@@ -14,6 +14,12 @@ defmodule ChurchApp.Accounts.Church do
     field :phone_number, :string
     field :email, :string
 
+    field :google_api_key, :string
+    field :stripe_secret_key, :string
+    field :stripe_publishable_key, :string
+    field :onesignal_app_id, :string
+    field :onesignal_api_key, :string
+
     embeds_many :schedules, Schedule, on_replace: :delete
     belongs_to :user, ChurchApp.Accounts.User
     has_many :latest_videos, LatestVideos
@@ -35,7 +41,12 @@ defmodule ChurchApp.Accounts.Church do
       :address_line_one,
       :address_line_two,
       :phone_number,
-      :email
+      :email,
+      :google_api_key,
+      :stripe_secret_key,
+      :stripe_publishable_key,
+      :onesignal_app_id,
+      :onesignal_api_key
     ])
     |> validate_required([:name, :intro, :uuid, :channel_id])
     |> unique_constraint(:channel_id)

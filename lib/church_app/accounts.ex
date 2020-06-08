@@ -13,6 +13,10 @@ defmodule ChurchApp.Accounts do
 
   alias ChurchApp.Api.StripeApi
 
+  def list_users() do
+    Repo.all(User) |> Repo.preload(:church)
+  end
+
   def get_church_by_id(church_id) do
     church = Repo.get_by(Church, id: church_id) |> Repo.preload(:latest_videos)
 
@@ -219,7 +223,7 @@ defmodule ChurchApp.Accounts do
 
         case is_nil(image_key_name) do
           false ->
-            result = Utility.delete_file_from_s3(bucket_name, image_key_name)
+            Utility.delete_file_from_s3(bucket_name, image_key_name)
             update_church(user.church, %{slide_image_two: nil})
 
           _ ->

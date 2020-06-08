@@ -16,6 +16,12 @@ defmodule ChurchAppWeb.Schema do
   end
 
   query do
+    @desc "List all user"
+    field :list_users, list_of(:user) do
+      middleware(Middleware.AdminOnly)
+      resolve(&Resolvers.Admin.list_users/3)
+    end
+
     @desc "Get the currently signed in user"
     field :me, :user do
       resolve(&Resolvers.Accounts.me/3)
@@ -37,10 +43,11 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.YoutubeResolver.search_videos/3)
     end
 
-    # TODO: Do this for live streaming
+    # TODO: Currently using search.list api which consumes 100 per request
     @desc "Get live streaming video"
     field :get_live_streaming, :video_search_response do
       arg(:channel_id, non_null(:string))
+      resolve(&Resolvers.YoutubeResolver.search_live_streaming_videos/3)
     end
 
     @desc "Get all playlists"
