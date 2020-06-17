@@ -26,10 +26,12 @@ defmodule ChurchAppWeb.Router do
 
     forward("/api", Absinthe.Plug, schema: ChurchAppWeb.Schema)
 
-    forward("/graphiql", Absinthe.Plug.GraphiQL,
-      schema: ChurchAppWeb.Schema,
-      socket: ChurchAppWeb.UserSocket
-    )
+    if Mix.env() == :dev do
+      forward("/graphiql", Absinthe.Plug.GraphiQL,
+        schema: ChurchAppWeb.Schema,
+        socket: ChurchAppWeb.UserSocket
+      )
+    end
   end
 
   scope "/webhook", ChurchAppWeb do
