@@ -6,13 +6,11 @@ defmodule ChurchApp.Youtube do
   alias GoogleApi.YouTube.V3.Connection
 
   def initialize_connection() do
-    api_key = Application.get_env(:church_app, :api_key)
-    connection = Connection.new()
-    {api_key, connection}
+    Connection.new()
   end
 
-  def list_playlists_info(channel_id, part, max_results) do
-    {api_key, connection} = initialize_connection()
+  def list_playlists_info(channel_id, part, max_results, api_key) do
+    connection = initialize_connection()
 
     with {:ok, %{items: playlists, nextPageToken: next_page_token, pageInfo: page_info}} <-
            YoutubeApi.get_playlists(connection, part, api_key, channel_id, max_results) do
@@ -22,8 +20,8 @@ defmodule ChurchApp.Youtube do
     end
   end
 
-  def list_playlist_items(part, playlist_id, max_results, next_page_token) do
-    {api_key, connection} = initialize_connection()
+  def list_playlist_items(part, playlist_id, max_results, next_page_token, api_key) do
+    connection = initialize_connection()
 
     with {:ok, %{items: playlist_items, nextPageToken: next_page_token, pageInfo: page_info}} <-
            YoutubeApi.get_playlist_items(
@@ -40,8 +38,8 @@ defmodule ChurchApp.Youtube do
     end
   end
 
-  def search_videos(channel_id, part, query, order, max_results, next_page_token) do
-    {api_key, connection} = initialize_connection()
+  def search_videos(channel_id, part, query, order, max_results, next_page_token, api_key) do
+    connection = initialize_connection()
 
     with {:ok, video_search_list_response} <-
            YoutubeApi.search_videos(
@@ -61,8 +59,8 @@ defmodule ChurchApp.Youtube do
     end
   end
 
-  def search_live_streraming(channel_id) do
-    {api_key, connection} = initialize_connection()
+  def search_live_streraming(channel_id, api_key) do
+    connection = initialize_connection()
 
     with {:ok, live_streaming} <-
            YoutubeApi.search_live_streaming(connection, api_key, channel_id) do

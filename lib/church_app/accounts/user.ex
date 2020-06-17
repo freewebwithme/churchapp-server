@@ -6,6 +6,7 @@ defmodule ChurchApp.Accounts.User do
     field :name, :string
     field :email, :string
     field :password, Comeonin.Ecto.Password
+    field :phone_number, :string
     field :admin, :boolean
 
     has_one :church, ChurchApp.Accounts.Church, on_delete: :delete_all
@@ -16,7 +17,7 @@ defmodule ChurchApp.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :email, :password, :admin])
+    |> cast(attrs, [:name, :email, :password, :phone_number, :admin])
     |> unique_constraint(:email)
     |> validate_required([:name, :email, :password])
     |> validate_email_format()
@@ -24,12 +25,18 @@ defmodule ChurchApp.Accounts.User do
   end
 
   defp validate_email_format(changeset) do
-    case EmailChecker.Check.Format.valid?(changeset.changes.email) do
-      true ->
+    case Map.has_key?(changeset.changes, :email) do
+      false ->
         changeset
 
       _ ->
-        add_error(changeset, :email, "email is not valid")
+        case EmailChecker.Check.Format.valid?(changeset.changes.email) do
+          true ->
+            changeset
+
+          _ ->
+            add_error(changeset, :email, "email is not valid")
+        end
     end
   end
 end

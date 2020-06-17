@@ -3,11 +3,14 @@ defmodule ChurchApp.Api.StripeApi do
   alias ChurchApp.Accounts
   alias ChurchApp.Accounts.StripeUser
 
-  def create_user(email) do
-    Customer.create(%{email: email})
+  def create_user(email, api_key) do
+    Customer.create(%{email: email}, api_key: api_key)
   end
 
   def confirm_payment(amount, payment_method_id, email, church_id) do
+    # Get church for api key
+    church = Accounts.get_only_church_by_id(church_id)
+
     # Get or create stripe customer.
     stripe_user_id =
       case Accounts.get_stripe_user(email, church_id) do
@@ -22,18 +25,23 @@ defmodule ChurchApp.Api.StripeApi do
 
     # Attach payment method to customer
     {:ok, _result} =
-      Stripe.PaymentMethod.attach(%{customer: stripe_user_id, payment_method: payment_method_id})
+      Stripe.PaymentMethod.attach(%{customer: stripe_user_id, payment_method: payment_method_id},
+        api_key: church.stripe_secret_key
+      )
 
     # Make a payment
-    case PaymentIntent.create(%{
-           amount: amount,
-           currency: "USD",
-           customer: stripe_user_id,
-           payment_method: payment_method_id,
-           receipt_email: email,
-           off_session: false,
-           confirm: true
-         }) do
+    case PaymentIntent.create(
+           %{
+             amount: amount,
+             currency: "USD",
+             customer: stripe_user_id,
+             payment_method: payment_method_id,
+             receipt_email: email,
+             off_session: false,
+             confirm: true
+           },
+           api_key: church.stripe_secret_key
+         ) do
       {:ok, result} ->
         [charge] = Enum.take(result.charges.data, 1)
 

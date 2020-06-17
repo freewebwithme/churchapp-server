@@ -13,12 +13,13 @@ defmodule ChurchApp.Accounts.Church do
     field :address_line_two, :string
     field :phone_number, :string
     field :email, :string
+    field :website, :string
 
-    field :google_api_key, :string
-    field :stripe_secret_key, :string
-    field :stripe_publishable_key, :string
-    field :onesignal_app_id, :string
-    field :onesignal_api_key, :string
+    field :google_api_key, ChurchApp.Encrypted.Binary
+    field :stripe_secret_key, ChurchApp.Encrypted.Binary
+    field :stripe_publishable_key, ChurchApp.Encrypted.Binary
+    field :onesignal_app_id, ChurchApp.Encrypted.Binary
+    field :onesignal_api_key, ChurchApp.Encrypted.Binary
 
     embeds_many :schedules, Schedule, on_replace: :delete
     belongs_to :user, ChurchApp.Accounts.User
@@ -42,6 +43,7 @@ defmodule ChurchApp.Accounts.Church do
       :address_line_two,
       :phone_number,
       :email,
+      :website,
       :google_api_key,
       :stripe_secret_key,
       :stripe_publishable_key,

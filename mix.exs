@@ -64,7 +64,9 @@ defmodule ChurchApp.MixProject do
       {:stripity_stripe, "~> 2.8", override: true},
       {:dataloader, "~> 1.0.0"},
       {:recaptcha, "~> 3.0", override: true},
-      {:one_signal, git: "https://github.com/freewebwithme/one_signal.git"}
+      {:one_signal, git: "https://github.com/freewebwithme/one_signal.git"},
+      {:cloak_ecto, "~> 1.0"},
+      {:bamboo, "~> 1.5"}
     ]
   end
 

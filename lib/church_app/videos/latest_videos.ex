@@ -11,7 +11,7 @@ defmodule ChurchApp.Videos.LatestVideos do
     field :published_at, :string
     field :channel_title, :string
 
-    belongs_to :church, Church.Accounts.Church
+    belongs_to :church, ChurchApp.Accounts.Church
     timestamps()
   end
 

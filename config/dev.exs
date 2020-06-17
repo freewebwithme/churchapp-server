@@ -22,6 +22,7 @@ config :church_app, ChurchAppWeb.Endpoint,
   check_origin: false,
   watchers: []
 
+config :church_app, ChurchApp.Mailer, adapter: Bamboo.LocalAdapter
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

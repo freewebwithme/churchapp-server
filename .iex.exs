@@ -52,6 +52,7 @@ alias ChurchApp.Videos.LatestVideos
 alias ChurchApp.{Videos, Accounts}
 alias ChurchApp.Accounts.{User, Employee, News}
 alias ChurchApp.Utility
+alias ChurchApp.Accounts
 
 channel_id = "UC-R1QgG_g_hRrTsNxqyW1aw"
 playlist_id = "PLdRZTYVWsX1jNZwuxNsENC6-J8kQv0sAy"

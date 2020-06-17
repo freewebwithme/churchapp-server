@@ -8,6 +8,7 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :id, :id
     field :name, :string
     field :email, :string
+    field :phone_number, :string
     field :admin, :boolean
     field :church, :church
   end
@@ -23,6 +24,14 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :address_line_two, :string
     field :phone_number, :string
     field :email, :string
+    field :website, :string
+
+    # Key info, only for admin.
+    field :google_api_key, :string
+    field :stripe_secret_key, :string
+    field :stripe_publishable_key, :string
+    field :onesignal_app_id, :string
+    field :onesignal_api_key, :string
 
     field :schedules, list_of(:schedule) do
       resolve(fn parent, _, _ ->

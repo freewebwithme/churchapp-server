@@ -16,8 +16,9 @@ defmodule ChurchApp.Application do
       # Start the Endpoint (http/https)
       ChurchAppWeb.Endpoint,
       # Start a worker by calling: ChurchApp.Worker.start_link(arg)
-      {Absinthe.Subscription, ChurchAppWeb.Endpoint}
+      {Absinthe.Subscription, ChurchAppWeb.Endpoint},
       # {ChurchApp.Worker, arg}
+      ChurchApp.Vault
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

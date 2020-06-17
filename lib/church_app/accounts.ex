@@ -17,6 +17,10 @@ defmodule ChurchApp.Accounts do
     Repo.all(User) |> Repo.preload(:church)
   end
 
+  def get_only_church_by_id(church_id) do
+    Repo.get_by(Church, id: church_id)
+  end
+
   def get_church_by_id(church_id) do
     church = Repo.get_by(Church, id: church_id) |> Repo.preload(:latest_videos)
 
@@ -46,10 +50,12 @@ defmodule ChurchApp.Accounts do
     church =
       case Enum.empty?(church.latest_videos) do
         true ->
+          IO.puts("Fetching recent videos")
           latest_videos = Videos.get_most_recent_videos(church)
           Map.put(church, :latest_videos, latest_videos)
 
         _ ->
+          IO.puts("Church has latest videos already")
           church
       end
 
@@ -72,6 +78,9 @@ defmodule ChurchApp.Accounts do
 
     case changeset.changes["channel_id"] do
       nil ->
+        Repo.update(changeset)
+
+      _ ->
         # channel id is updated, call latest videos from youtube
         {:ok, church} = Repo.update(changeset)
         # delete old latest videos
@@ -79,9 +88,6 @@ defmodule ChurchApp.Accounts do
         latest_videos = Videos.get_most_recent_videos_from_youtube(church)
         church = Map.put(church, :latest_videos, latest_videos)
         {:ok, church}
-
-      _ ->
-        Repo.update(changeset)
     end
   end
 
@@ -213,37 +219,6 @@ defmodule ChurchApp.Accounts do
     end
   end
 
-  def delete_slide_image(user_id, slider_number) do
-    user = get_user(user_id)
-    bucket_name = Utility.get_bucket_name()
-
-    cond do
-      slider_number == "sliderTwo" ->
-        image_key_name = user.church.slide_image_two
-
-        case is_nil(image_key_name) do
-          false ->
-            Utility.delete_file_from_s3(bucket_name, image_key_name)
-            update_church(user.church, %{slide_image_two: nil})
-
-          _ ->
-            nil
-        end
-
-      slider_number == "sliderThree" ->
-        image_key_name = user.church.slide_image_two
-
-        case is_nil(image_key_name) do
-          false ->
-            Utility.delete_file_from_s3(bucket_name, image_key_name)
-            update_church(user.church, %{slide_image_three: nil})
-
-          _ ->
-            nil
-        end
-    end
-  end
-
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
@@ -263,6 +238,17 @@ defmodule ChurchApp.Accounts do
     |> Repo.update()
   end
 
+  def change_password(email, current_password, new_password) do
+    # Authenticate user with email and password
+    case authenticate_user(email, current_password) do
+      {:ok, user} ->
+        update_user(user, %{password: new_password})
+
+      _ ->
+        {:error, "이메일과 패스워드가 일치하지 않습니다"}
+    end
+  end
+
   def authenticate_user(email, password) do
     user = Repo.get_by(User, email: email) |> Repo.preload(:church)
 
@@ -275,7 +261,11 @@ defmodule ChurchApp.Accounts do
   end
 
   def create_stripe_user(email, church_id) do
-    {:ok, stripe_user} = StripeApi.create_user(email)
+    # Get church stripe api key
+    church = get_only_church_by_id(church_id)
+
+    # Pass church's stripe key for Stripe request
+    {:ok, stripe_user} = StripeApi.create_user(email, church.stripe_secret_key)
 
     %StripeUser{}
     |> StripeUser.changeset(%{email: email, stripe_id: stripe_user.id, church_id: church_id})

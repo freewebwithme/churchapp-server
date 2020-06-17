@@ -106,7 +106,16 @@ defmodule ChurchApp.Videos do
   end
 
   def get_most_recent_videos_from_youtube(church) do
-    {:ok, response} = Youtube.search_videos(church.channel_id, "snippet", "", "date", 25, "")
+    {:ok, response} =
+      Youtube.search_videos(
+        church.channel_id,
+        "snippet",
+        "",
+        "date",
+        25,
+        "",
+        church.google_api_key
+      )
 
     {_rows, videos} =
       build_videos_from_response(response, church.id)
@@ -129,8 +138,11 @@ defmodule ChurchApp.Videos do
   end
 
   def get_all_playlists(channel_id) do
+    # get church for api key
+    church = Accounts.get_church_by_channel_id(channel_id)
+
     %{items: playlists, next_page_token: _token, page_info: _info} =
-      Youtube.list_playlists_info(channel_id, "snippet", 25)
+      Youtube.list_playlists_info(channel_id, "snippet", 25, church.google_api_key)
 
     build_playlists(playlists)
   end

@@ -16,10 +16,17 @@ defmodule ChurchAppWeb.Schema do
   end
 
   query do
-    @desc "List all user"
+    @desc "List all user(ADMIN)"
     field :list_users, list_of(:user) do
       middleware(Middleware.AdminOnly)
       resolve(&Resolvers.Admin.list_users/3)
+    end
+
+    @desc "Get user(ADMIN)"
+    field :get_user, :user do
+      arg(:id, non_null(:string))
+      middleware(Middleware.AdminOnly)
+      resolve(&Resolvers.Admin.get_user/3)
     end
 
     @desc "Get the currently signed in user"
@@ -58,6 +65,7 @@ defmodule ChurchAppWeb.Schema do
 
     @desc "Get all playlist items"
     field :playlist_items, :video_search_response do
+      arg(:church_id, :string)
       arg(:next_page_token, :string)
       arg(:playlist_id, :string)
       resolve(&Resolvers.YoutubeResolver.get_playlist_items/3)
@@ -65,6 +73,26 @@ defmodule ChurchAppWeb.Schema do
   end
 
   mutation do
+    @desc "Update Keys Info(ADMIN)"
+    field :update_key_info, :church do
+      arg(:church_id, :string)
+      arg(:google_api_key, :string)
+      arg(:stripe_secret_key, :string)
+      arg(:stripe_publishable_key, :string)
+      arg(:onesignal_app_id, :string)
+      arg(:onesignal_api_key, :string)
+      middleware(Middleware.AdminOnly)
+      resolve(&Resolvers.Admin.update_key_info/3)
+    end
+
+    @desc "Send push notification"
+    field :send_push, :notification_response do
+      arg(:church_id, :string)
+      arg(:title, :string)
+      arg(:message, :string)
+      resolve(&Resolvers.OnesignalResolver.send_push/3)
+    end
+
     @desc "Make a payment using payment id from client"
     field :make_offering, :payment_intent do
       arg(:payment_method_id, :string)
@@ -91,12 +119,21 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.Accounts.sign_in/3)
     end
 
-    @desc "Get presigned url"
-    field :get_presigned_url, :presigned_url do
-      arg(:file_extension, :string)
-      arg(:content_type, :string)
-      arg(:user_id, :id)
-      resolve(&Resolvers.AmazonResolver.get_presigned_url/3)
+    @desc "Update user info"
+    field :update_me, :user do
+      arg(:user_id, non_null(:string))
+      arg(:name, non_null(:string))
+      arg(:email, non_null(:string))
+      arg(:phone_number, :string)
+      resolve(&Resolvers.Accounts.update_me/3)
+    end
+
+    @desc "Change password"
+    field :change_password, :user do
+      arg(:email, non_null(:string))
+      arg(:current_password, non_null(:string))
+      arg(:new_password, non_null(:string))
+      resolve(&Resolvers.Accounts.change_password/3)
     end
 
     @desc "create church for user"
@@ -109,6 +146,7 @@ defmodule ChurchAppWeb.Schema do
       arg(:address_line_two, :string)
       arg(:phone_number, :string)
       arg(:email, :string)
+      arg(:website, :string)
 
       resolve(&Resolvers.Accounts.create_church/3)
     end
@@ -123,6 +161,7 @@ defmodule ChurchAppWeb.Schema do
       arg(:address_line_two, :string)
       arg(:phone_number, :string)
       arg(:email, :string)
+      arg(:website, :string)
 
       resolve(&Resolvers.Accounts.update_church/3)
     end
@@ -198,6 +237,11 @@ defmodule ChurchAppWeb.Schema do
 
       resolve(&Resolvers.YoutubeResolver.refetch_latest_videos/3)
     end
+  end
+
+  object :notification_response do
+    field :id, :string
+    field :recipients, :integer
   end
 
   object :session do

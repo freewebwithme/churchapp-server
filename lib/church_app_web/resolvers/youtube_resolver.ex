@@ -18,8 +18,19 @@ defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
       ) do
     part = "snippet"
 
+    # get church for api key
+    church = Accounts.get_church_by_channel_id(channel_id)
+
     {:ok, video_search_list_response} =
-      Youtube.search_videos(channel_id, part, query, order, max_results, next_page_token_request)
+      Youtube.search_videos(
+        channel_id,
+        part,
+        query,
+        order,
+        max_results,
+        next_page_token_request,
+        church.google_api_key
+      )
 
     %{
       etag: etag,
@@ -68,14 +79,25 @@ defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
 
   def get_all_playlists(_, %{channel_id: channel_id}, _) do
     playlists = Videos.get_all_playlists(channel_id)
-    IO.puts("Printing playlist")
-    IO.inspect(playlists)
     {:ok, playlists}
   end
 
-  def get_playlist_items(_, %{next_page_token: next_page_token, playlist_id: playlist_id}, _) do
+  def get_playlist_items(
+        _,
+        %{church_id: church_id, next_page_token: next_page_token, playlist_id: playlist_id},
+        _
+      ) do
+    # get church for api key
+    church = Accounts.get_church_by_id(church_id)
+
     %{items: videos, next_page_token: token, page_info: _page_info} =
-      Youtube.list_playlist_items("snippet", playlist_id, 25, next_page_token)
+      Youtube.list_playlist_items(
+        "snippet",
+        playlist_id,
+        25,
+        next_page_token,
+        church.google_api_key
+      )
 
     playlist_items =
       Enum.map(videos, fn video ->
@@ -129,7 +151,10 @@ defmodule ChurchAppWeb.Resolvers.YoutubeResolver do
   end
 
   def search_live_streaming_videos(_, %{channel_id: channel_id}, _) do
-    {:ok, live_streaming} = Youtube.search_live_streraming(channel_id)
+    # get church for api key
+    church = Accounts.get_church_by_channel_id(channel_id)
+
+    {:ok, live_streaming} = Youtube.search_live_streraming(channel_id, church.google_api_key)
 
     %{
       etag: etag,

@@ -9,6 +9,20 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
 
   def me(_, _, _), do: {:ok, nil}
 
+  def update_me(_, args, _) do
+    %{user_id: user_id} = args
+    user = Accounts.get_user(user_id)
+    Accounts.update_user(user, args)
+  end
+
+  def change_password(
+        _,
+        %{email: email, current_password: current_password, new_password: new_password},
+        _
+      ) do
+    Accounts.change_password(email, current_password, new_password)
+  end
+
   def sign_in(_, %{email: email, password: password}, _) do
     case Accounts.authenticate_user(email, password) do
       {:ok, user} ->

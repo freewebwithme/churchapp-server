@@ -8,9 +8,7 @@
 use Mix.Config
 
 config :church_app,
-  ecto_repos: [ChurchApp.Repo],
-  api_key: System.get_env("API_KEY"),
-  channel_id: System.get_env("CHANNEL_ID")
+  ecto_repos: [ChurchApp.Repo]
 
 # Configures the endpoint
 config :church_app, ChurchAppWeb.Endpoint,
@@ -19,6 +17,8 @@ config :church_app, ChurchAppWeb.Endpoint,
   render_errors: [view: ChurchAppWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: ChurchApp.PubSub,
   live_view: [signing_salt: System.get_env("LIVE_VIEW_SIGNING_SALT")]
+
+config :church_app, ChurchApp.Mailer, adapter: Bamboo.LocalAdapter
 
 config :ex_aws,
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],

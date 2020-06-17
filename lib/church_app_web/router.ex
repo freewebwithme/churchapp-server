@@ -51,6 +51,12 @@ defmodule ChurchAppWeb.Router do
     post "/upload", ProfileImageUploadController, :upload
   end
 
+  if Mix.env() == :dev do
+    forward "/sent_emails", Bamboo.SentEmailViewerPlug
+    # If using Plug.Router, make sure to add the `to`
+    # forward "/sent_emails", to: Bamboo.SentEmailViewerPlug
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ChurchAppWeb do
   #   pipe_through :api
