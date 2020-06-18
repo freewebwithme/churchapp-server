@@ -7,14 +7,13 @@ defmodule ChurchAppWeb.Plugs.SetCurrentUser do
   def call(conn, _) do
     context = build_context(conn)
     result = get_req_header(conn, "authorization")
-    IO.puts("Printing authorization header")
-    IO.inspect(result)
     Absinthe.Plug.put_options(conn, context: context)
   end
 
+  @max_age 35 * 24 * 365
   defp build_context(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, %{id: id}} <- ChurchAppWeb.AuthToken.verify(token),
+         {:ok, %{id: id}} <- ChurchAppWeb.AuthToken.verify(token, @max_age),
          %{} = user <- ChurchApp.Accounts.get_user(id) do
       IO.puts("User has bearer token in context")
 

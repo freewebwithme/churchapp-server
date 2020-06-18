@@ -12,6 +12,8 @@ defmodule ChurchAppWeb.Resolvers.Admin do
   def update_key_info(_, args, _) do
     %{church_id: church_id} = args
     church = Accounts.get_church_by_id(church_id)
+    # Add has_key true to args map
+    args = Map.put(args, :has_key, true)
     Accounts.update_church(church, args)
   end
 end

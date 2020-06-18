@@ -1,13 +1,13 @@
 defmodule ChurchAppWeb.Router do
   use ChurchAppWeb, :router
 
-  #  pipeline :browser do
-  #    plug :accepts, ["html"]
-  #    plug :fetch_session
-  #    plug :fetch_flash
-  #    plug :protect_from_forgery
-  #    plug :put_secure_browser_headers
-  #  end
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
 
   pipeline :api do
     plug CORSPlug, origin: "*"
@@ -39,12 +39,6 @@ defmodule ChurchAppWeb.Router do
 
     get "/youtube", YoutubeController, :subscribe_confirm
     post "/youtube", YoutubeController, :handle_upload_notification
-  end
-
-  scope "/slide-image", ChurchAppWeb do
-    pipe_through(:api)
-
-    post "/upload", SlideimageController, :upload
   end
 
   scope "/profile-image", ChurchAppWeb do

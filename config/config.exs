@@ -18,7 +18,11 @@ config :church_app, ChurchAppWeb.Endpoint,
   pubsub_server: ChurchApp.PubSub,
   live_view: [signing_salt: System.get_env("LIVE_VIEW_SIGNING_SALT")]
 
-config :church_app, ChurchApp.Mailer, adapter: Bamboo.LocalAdapter
+config :church_app, ChurchApp.Emails.Mailer,
+  adapter: Bamboo.MailgunAdapter,
+  api_key: System.get_env("MAILGUN_API"),
+  domain: System.get_env("MAILGUN_DOMAIN_NAME"),
+  base_uri: System.get_env("MAILGUN_BASE_URI")
 
 config :ex_aws,
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],

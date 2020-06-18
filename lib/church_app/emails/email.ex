@@ -1,6 +1,6 @@
-defmodule ChurchApp.Email do
+defmodule ChurchApp.Emails.Email do
   import Bamboo.Email
-  import Bamboo.Phoenix
+  use Bamboo.Phoenix, view: ChurchAppWeb.EmailView
 
   def welcome_email(email) do
     base_email()
@@ -13,12 +13,10 @@ defmodule ChurchApp.Email do
     |> to(email)
     |> subject("ChurchApp 패스워드 복구 링크입니다")
     |> assign(:link, link)
-    |> html_body("
-      <div>
-        <h4>패스워드 복구 링크입니다. 클릭하세요</h4>
-        <a href='<%= @link %>>패스워드 복구 링크 가기</a>
-      </div>
-    ")
+    # use password_reset.html.eex
+    |> render(:password_reset)
+
+    # |> put_html_layout({ChurchAppWeb.LayoutView, "password_reset.html"})
   end
 
   defp base_email do

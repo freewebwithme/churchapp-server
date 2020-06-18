@@ -9,7 +9,7 @@ defmodule ChurchAppWeb.AuthToken do
     Phoenix.Token.sign(ChurchAppWeb.Endpoint, @user_salt, %{id: user.id})
   end
 
-  def verify(token) do
-    Phoenix.Token.verify(ChurchAppWeb.Endpoint, @user_salt, token, max_age: 365 * 24 * 3600)
+  def verify(token, max_age) do
+    Phoenix.Token.verify(ChurchAppWeb.Endpoint, @user_salt, token, max_age: max_age)
   end
 end

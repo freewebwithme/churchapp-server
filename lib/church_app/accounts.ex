@@ -24,14 +24,18 @@ defmodule ChurchApp.Accounts do
   def get_church_by_id(church_id) do
     church = Repo.get_by(Church, id: church_id) |> Repo.preload(:latest_videos)
 
-    return_church_with_latest_videos(church)
+    case church.has_key do
+      true ->
+        return_church_with_latest_videos(church)
+
+      _ ->
+        church
+    end
   end
 
   def get_church_by_uuid(uuid) do
-    # |> Repo.preload([:latest_videos])
     church = Repo.get_by(Church, uuid: uuid) |> Repo.preload(:latest_videos)
     church
-    # return_church_with_latest_videos(church)
   end
 
   @doc """
@@ -81,13 +85,22 @@ defmodule ChurchApp.Accounts do
         Repo.update(changeset)
 
       _ ->
-        # channel id is updated, call latest videos from youtube
-        {:ok, church} = Repo.update(changeset)
-        # delete old latest videos
-        Videos.delete_all_latest_videos(church.id)
-        latest_videos = Videos.get_most_recent_videos_from_youtube(church)
-        church = Map.put(church, :latest_videos, latest_videos)
-        {:ok, church}
+        case church.has_key do
+          # Church has api key, so it is safe to call youtube api
+          true ->
+            # channel id is updated, call latest videos from youtube
+            {:ok, church} = Repo.update(changeset)
+            # delete old latest videos
+            Videos.delete_all_latest_videos(church.id)
+            latest_videos = Videos.get_most_recent_videos_from_youtube(church)
+            church = Map.put(church, :latest_videos, latest_videos)
+            {:ok, church}
+
+          _ ->
+            # CHurch has no api key set up.
+            # Don't call Youtube Api
+            Repo.update(changeset)
+        end
     end
   end
 
@@ -167,10 +180,18 @@ defmodule ChurchApp.Accounts do
     {church_id, ""} = Integer.parse(church_id)
 
     with true <- employee.church_id == church_id do
-      # Delete Profile image from amazon s3
-      bucket_name = Utility.get_bucket_name()
-      Utility.delete_file_from_s3(bucket_name, employee.profile_image)
-      Repo.delete(employee)
+      case employee.profile_image == "default-avatar.jpg" do
+        true ->
+          # Employee is using default avatar image.
+          # Don't delete from amazon S3
+          Repo.delete(employee)
+
+        _ ->
+          # Delete Profile image from amazon s3
+          bucket_name = Utility.get_bucket_name()
+          Utility.delete_file_from_s3(bucket_name, employee.profile_image)
+          Repo.delete(employee)
+      end
     else
       false ->
         {:error, "정보를 수정할 수가 없습니다."}
@@ -232,6 +253,12 @@ defmodule ChurchApp.Accounts do
     Repo.get(User, id) |> Repo.preload(:church)
   end
 
+  def get_user_by_email(email) do
+    # This is used by password reset function
+    # Don't need to preload church.
+    Repo.get_by(User, email: email)
+  end
+
   def update_user(%User{} = user, attrs \\ %{}) do
     user
     |> User.changeset(attrs)
@@ -247,6 +274,12 @@ defmodule ChurchApp.Accounts do
       _ ->
         {:error, "이메일과 패스워드가 일치하지 않습니다"}
     end
+  end
+
+  def reset_password(email, new_password) do
+    # get user by email
+    user = get_user_by_email(email)
+    update_user(user, %{password: new_password})
   end
 
   def authenticate_user(email, password) do

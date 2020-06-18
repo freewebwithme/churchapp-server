@@ -1,9 +1,8 @@
 defmodule ChurchAppWeb.Resolvers.Accounts do
   alias ChurchApp.Accounts
+  alias ChurchApp.Emails.Postman
 
   def me(_, _, %{context: %{current_user: user}}) do
-    IO.puts("Found a user")
-    IO.inspect(user)
     {:ok, user}
   end
 
@@ -21,6 +20,25 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
         _
       ) do
     Accounts.change_password(email, current_password, new_password)
+  end
+
+  def reset_password(
+        _,
+        %{
+          email_from_token: email_from_token,
+          email_from_input: email_from_input,
+          new_password: new_password
+        },
+        _
+      ) do
+    # compare 2 emails for security
+    case email_from_token == email_from_input do
+      true ->
+        Accounts.reset_password(email_from_token, new_password)
+
+      _ ->
+        {:error, "이메일이 맞지 않습니다"}
+    end
   end
 
   def sign_in(_, %{email: email, password: password}, _) do
@@ -41,8 +59,6 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
 
     case Recaptcha.verify(value) do
       {:ok, _response} ->
-        IO.puts("Recaptcha is verified")
-
         with {:ok, user} <- Accounts.create_user(args) do
           # Verify recaptcha value
           token = ChurchAppWeb.AuthToken.sign(user)
@@ -50,8 +66,46 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
         end
 
       _ ->
-        IO.puts("Recaptcha is not verified")
         {:error, "가입할 수 없습니다.  다시 시도하세요"}
+    end
+  end
+
+  @doc """
+  Password reset start when user enter email address in password-reset page
+  """
+
+  def password_reset_start(_, %{email: email, recaptcha_value: recaptcha_value}, _) do
+    # Check if email is valid user.
+    case Recaptcha.verify(recaptcha_value) do
+      {:ok, _response} ->
+        IO.puts("Calling from resolvers")
+        Postman.send_reset_password_email(email)
+
+      _ ->
+        {:error, "더 이상 진행할 수 없습니다. 다시 시도하세요"}
+    end
+  end
+
+  def verify_token_for_reset_password(_, %{token: token}, _) do
+    # 10 min
+    case ChurchAppWeb.AuthToken.verify(token, 600) do
+      {:ok, %{id: id}} ->
+        # get user's email
+        # Why I pass email to client is that I want to save into client's prop
+        # then want to compare with user's input(email) again with final submit to
+        # reset password.
+
+        user = Accounts.get_user(id)
+        {:ok, %{success: true, email: user.email, message: "링크가 확인되었습니다"}}
+
+      {:error, :invalid} ->
+        {:error, "맞지않는 링크입니다."}
+
+      {:error, :expired} ->
+        {:error, "링크의 사용시간이 지났습니다.  다시 요청하세요."}
+
+      _ ->
+        {:error, "에러가 발생했습니다. 다시 시도하세요"}
     end
   end
 
@@ -96,9 +150,5 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
 
   def delete_news(_, args, _) do
     Accounts.delete_news(args)
-  end
-
-  def delete_slide_image(_, %{slider_number: slider_number, user_id: user_id}, _) do
-    Accounts.delete_slide_image(user_id, slider_number)
   end
 end

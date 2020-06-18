@@ -34,6 +34,12 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.Accounts.me/3)
     end
 
+    @desc "Verify token for reset password"
+    field :verify_token, :verify_token_response do
+      arg(:token, non_null(:string))
+      resolve(&Resolvers.Accounts.verify_token_for_reset_password/3)
+    end
+
     @desc "Get church"
     field :get_church, :church do
       arg(:uuid, :string)
@@ -85,6 +91,13 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.Admin.update_key_info/3)
     end
 
+    @desc "Password reset start, sending a link by email"
+    field :password_reset_start, :password_reset_response do
+      arg(:email, :string)
+      arg(:recaptcha_value, :string)
+      resolve(&Resolvers.Accounts.password_reset_start/3)
+    end
+
     @desc "Send push notification"
     field :send_push, :notification_response do
       arg(:church_id, :string)
@@ -134,6 +147,14 @@ defmodule ChurchAppWeb.Schema do
       arg(:current_password, non_null(:string))
       arg(:new_password, non_null(:string))
       resolve(&Resolvers.Accounts.change_password/3)
+    end
+
+    @desc "Reset Password"
+    field :reset_password, :user do
+      arg(:email_from_token, non_null(:string))
+      arg(:email_from_input, non_null(:string))
+      arg(:new_password, non_null(:string))
+      resolve(&Resolvers.Accounts.reset_password/3)
     end
 
     @desc "create church for user"
@@ -258,6 +279,17 @@ defmodule ChurchAppWeb.Schema do
     field :amount_received, :string
     field :receipt_url, :string
     field :status, :string
+  end
+
+  object :password_reset_response do
+    field :recipient, :string
+    field :message, :string
+  end
+
+  object :verify_token_response do
+    field :success, :boolean
+    field :email, :string
+    field :message, :string
   end
 
   def context(ctx) do
