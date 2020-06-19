@@ -15,6 +15,7 @@ defmodule ChurchApp.Accounts.Church do
     field :email, :string
     field :website, :string
     field :has_key, :boolean, default: false
+    field :active, :boolean, default: false
 
     field :google_api_key, ChurchApp.Encrypted.Binary
     field :stripe_secret_key, ChurchApp.Encrypted.Binary
@@ -46,6 +47,7 @@ defmodule ChurchApp.Accounts.Church do
       :email,
       :website,
       :has_key,
+      :active,
       :google_api_key,
       :stripe_secret_key,
       :stripe_publishable_key,

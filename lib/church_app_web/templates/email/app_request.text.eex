@@ -1,0 +1,8 @@
+
+<h4>App request Email from ChurchApp.dev</h4>
+<p>App Type: <%= @app_type %> </p>
+<p>Name: <%= @name %> </p>
+<p>Phone number: <%= @phone_number %> </p>
+<p>Email: <%= @email %> </p>
+<p>Church Name: <%= @church_name %> </p>
+<p>Message: <%= @message %> </p>

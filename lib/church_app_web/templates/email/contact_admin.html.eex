@@ -1,0 +1,6 @@
+
+<h4>Contact Admin from Registered User</h4>
+<p>Category: <%= @category%> </p>
+<p>Name: <%= @name %> </p>
+<p>Email: <%= @email %> </p>
+<p>Message: <%= @message %> </p>

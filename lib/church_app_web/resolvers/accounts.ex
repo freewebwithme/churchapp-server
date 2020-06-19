@@ -78,7 +78,6 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
     # Check if email is valid user.
     case Recaptcha.verify(recaptcha_value) do
       {:ok, _response} ->
-        IO.puts("Calling from resolvers")
         Postman.send_reset_password_email(email)
 
       _ ->
@@ -150,5 +149,36 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
 
   def delete_news(_, args, _) do
     Accounts.delete_news(args)
+  end
+
+  def app_request(_, args, _) do
+    %{
+      app_type: app_type,
+      name: name,
+      email: email,
+      phone_number: phone_number,
+      message: message,
+      church_name: church_name
+    } = args
+
+    case Postman.send_app_request_email(app_type, name, email, phone_number, church_name, message) do
+      %Bamboo.Email{} = _result ->
+        {:ok, %{success: true, message: "앱 신청을 완료했습니다."}}
+
+      _ ->
+        {:error, %{success: false, message: "앱 신청을 진행할 수 없습니다.  다시 시도하세요"}}
+    end
+  end
+
+  def contact_admin(_, args, _) do
+    %{category: category, name: name, email: email, message: message} = args
+
+    case Postman.contact_admin(category, name, email, message) do
+      %Bamboo.Email{} = _result ->
+        {:ok, %{success: true, message: "앱 신청을 완료했습니다."}}
+
+      _ ->
+        {:error, %{success: false, message: "앱 신청을 진행할 수 없습니다.  다시 시도하세요"}}
+    end
   end
 end

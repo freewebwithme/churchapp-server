@@ -91,11 +91,41 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.Admin.update_key_info/3)
     end
 
+    @desc "Change Church's active state"
+    field :change_active_state, :normal_response do
+      arg(:church_id, :string)
+      arg(:active, :boolean)
+
+      resolve(&Resolvers.Admin.change_active_state/3)
+    end
+
     @desc "Password reset start, sending a link by email"
     field :password_reset_start, :password_reset_response do
       arg(:email, :string)
       arg(:recaptcha_value, :string)
       resolve(&Resolvers.Accounts.password_reset_start/3)
+    end
+
+    @desc "User send app request"
+    field :app_request, :normal_response do
+      arg(:app_type, :string)
+      arg(:name, :string)
+      arg(:email, :string)
+      arg(:phone_number, :string)
+      arg(:message, :string)
+      arg(:church_name, :string)
+
+      resolve(&Resolvers.Accounts.app_request/3)
+    end
+
+    @desc "Contact from user"
+    field :contact_admin, :normal_response do
+      arg(:category, :string)
+      arg(:name, :string)
+      arg(:email, :string)
+      arg(:message, :string)
+
+      resolve(&Resolvers.Accounts.contact_admin/3)
     end
 
     @desc "Send push notification"
@@ -289,6 +319,11 @@ defmodule ChurchAppWeb.Schema do
   object :verify_token_response do
     field :success, :boolean
     field :email, :string
+    field :message, :string
+  end
+
+  object :normal_response do
+    field :success, :boolean
     field :message, :string
   end
 

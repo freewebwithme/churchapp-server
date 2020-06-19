@@ -19,6 +19,33 @@ defmodule ChurchApp.Emails.Email do
     # |> put_html_layout({ChurchAppWeb.LayoutView, "password_reset.html"})
   end
 
+  # Email to admin
+  def app_request_email(app_type, name, email, phone_number, church_name, message) do
+    new_email()
+    |> to("churchapp.dev@gmail.com")
+    |> from(email)
+    |> subject("App request from ChurchApp.dev")
+    |> assign(:app_type, app_type)
+    |> assign(:name, name)
+    |> assign(:email, email)
+    |> assign(:phone_number, phone_number)
+    |> assign(:church_name, church_name)
+    |> assign(:message, message)
+    |> render(:app_request)
+  end
+
+  def contact_admin(category, name, email, message) do
+    new_email()
+    |> to("churchapp.dev@gmail.com")
+    |> from(email)
+    |> subject("Contact from registered user")
+    |> assign(:category, category)
+    |> assign(:name, name)
+    |> assign(:email, email)
+    |> assign(:message, message)
+    |> render(:contact_admin)
+  end
+
   defp base_email do
     new_email()
     |> from("churchapp.dev@gmail.com")

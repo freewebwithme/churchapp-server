@@ -26,6 +26,7 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :email, :string
     field :website, :string
     field :has_key, :boolean
+    field :active, :boolean
 
     # Key info, only for admin.
     field :google_api_key, :string
