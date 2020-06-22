@@ -1,0 +1,4 @@
+<h4>Email from Landing Page</h4>
+<p>Name: <%= @name %> </p>
+<p>Email: <%= @email %> </p>
+<p>Message: <%= @message %> </p>

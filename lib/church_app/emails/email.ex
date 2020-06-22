@@ -46,6 +46,17 @@ defmodule ChurchApp.Emails.Email do
     |> render(:contact_admin)
   end
 
+  def send_email(name, email, message) do
+    new_email()
+    |> to("churchapp.dev@gmail.com")
+    |> from(email)
+    |> subject("Message from Landing page")
+    |> assign(:name, name)
+    |> assign(:email, email)
+    |> assign(:message, message)
+    |> render(:send_email)
+  end
+
   defp base_email do
     new_email()
     |> from("churchapp.dev@gmail.com")

@@ -181,4 +181,22 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
         {:error, %{success: false, message: "앱 신청을 진행할 수 없습니다.  다시 시도하세요"}}
     end
   end
+
+  def send_email(_, args, _) do
+    %{name: name, email: email, message: message, recaptcha_value: value} = args
+
+    case Recaptcha.verify(value) do
+      {:ok, _response} ->
+        case Postman.send_email(name, email, message) do
+          %Bamboo.Email{} = _result ->
+            {:ok, %{success: true, message: "앱 신청을 완료했습니다."}}
+
+          _ ->
+            {:error, %{success: false, message: "앱 신청을 진행할 수 없습니다.  다시 시도하세요"}}
+        end
+
+      _ ->
+        {:error, %{success: false, message: "문제가 발생했습니다. 다시 시도하세요"}}
+    end
+  end
 end

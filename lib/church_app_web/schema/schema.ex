@@ -128,6 +128,16 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.Accounts.contact_admin/3)
     end
 
+    @desc "Contact from non-user(from Landing page)"
+    field :send_email, :normal_response do
+      arg(:name, :string)
+      arg(:email, :string)
+      arg(:message, :string)
+      arg(:recaptcha_value, :string)
+
+      resolve(&Resolvers.Accounts.send_email/3)
+    end
+
     @desc "Send push notification"
     field :send_push, :notification_response do
       arg(:church_id, :string)

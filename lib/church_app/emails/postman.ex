@@ -32,4 +32,9 @@ defmodule ChurchApp.Emails.Postman do
     Email.contact_admin(category, name, email, message)
     |> Mailer.deliver_later()
   end
+
+  def send_email(name, email, message) do
+    Email.send_email(name, email, message)
+    |> Mailer.deliver_later()
+  end
 end
