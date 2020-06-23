@@ -20,9 +20,9 @@ config :church_app, ChurchAppWeb.Endpoint,
 
 config :church_app, ChurchApp.Emails.Mailer,
   adapter: Bamboo.MailgunAdapter,
-  api_key: System.get_env("MAILGUN_API"),
-  domain: System.get_env("MAILGUN_DOMAIN_NAME"),
-  base_uri: System.get_env("MAILGUN_BASE_URI")
+  api_key: {:system, "MAILGUN_API"},
+  domain: {:system, "MAILGUN_DOMAIN_NAME"},
+  base_uri: {:system, "MAILGUN_BASE_URI"}
 
 config :ex_aws,
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],

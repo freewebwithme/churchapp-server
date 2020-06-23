@@ -188,7 +188,9 @@ defmodule ChurchAppWeb.Resolvers.Accounts do
     case Recaptcha.verify(value) do
       {:ok, _response} ->
         case Postman.send_email(name, email, message) do
-          %Bamboo.Email{} = _result ->
+          %Bamboo.Email{} = result ->
+            IO.puts("Printing email result")
+            IO.inspect(result)
             {:ok, %{success: true, message: "앱 신청을 완료했습니다."}}
 
           _ ->
