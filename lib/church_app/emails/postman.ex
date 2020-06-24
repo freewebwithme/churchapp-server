@@ -1,7 +1,7 @@
 defmodule ChurchApp.Emails.Postman do
   alias ChurchApp.Accounts
   alias ChurchApp.Accounts.User
-  alias ChurchApp.Emails.{Email, Mailer}
+  alias ChurchApp.{Email, Mailer}
   alias ChurchApp.Response.PasswordResetResponse
 
   def send_reset_password_email(email) do

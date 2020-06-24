@@ -1,4 +1,4 @@
-defmodule ChurchApp.Emails.Email do
+defmodule ChurchApp.Email do
   import Bamboo.Email
   use Bamboo.Phoenix, view: ChurchAppWeb.EmailView
 
