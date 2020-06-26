@@ -15,10 +15,12 @@ defmodule ChurchApp.Api.StripeApi do
     stripe_user_id =
       case Accounts.get_stripe_user(email, church_id) do
         %StripeUser{} = user ->
+          IO.puts("Stripe user found")
           user.stripe_id
 
         nil ->
           # User doesn't exist, then create a user account in stripe
+          IO.puts("No stripe user exist, create it!")
           {:ok, stripe_user} = Accounts.create_stripe_user(email, church_id)
           stripe_user.stripe_id
       end

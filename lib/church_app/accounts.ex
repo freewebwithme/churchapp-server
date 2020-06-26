@@ -80,14 +80,16 @@ defmodule ChurchApp.Accounts do
   def update_church(%Church{} = church, attrs) do
     changeset = Church.changeset(church, attrs)
 
-    case changeset.changes["channel_id"] do
-      nil ->
+    case Map.has_key?(changeset.changes, :channel_id) do
+      false ->
+        IO.puts("No channel id changed")
         Repo.update(changeset)
 
       _ ->
         case church.has_key do
           # Church has api key, so it is safe to call youtube api
           true ->
+            IO.puts("Channel id has changed call latest video")
             # channel id is updated, call latest videos from youtube
             {:ok, church} = Repo.update(changeset)
             # delete old latest videos
