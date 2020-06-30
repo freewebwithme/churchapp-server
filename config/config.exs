@@ -39,6 +39,9 @@ config :recaptcha,
   secret: {:system, "RECAPTCHA_PRIVATE_KEY"},
   json_library: Jason
 
+config :one_signal,
+  user_auth_key: System.get_env("ONE_SIGNAL_USER_AUTH_KEY")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
