@@ -10,6 +10,8 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :email, :string
     field :phone_number, :string
     field :admin, :boolean
+    field :subscribed, :boolean
+    field :stripe_id, :string
     field :church, :church
   end
 
