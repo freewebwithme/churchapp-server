@@ -23,4 +23,18 @@ defmodule ChurchAppWeb.Resolvers.StripeResolver do
         {:error, message}
     end
   end
+
+  @doc """
+  Create customer portal session link using %Stripe.BillingPortal.Session
+  So user(church) can manage their subscription
+  """
+  def create_stripe_redirect_url(_, %{stripe_id: stripe_id}, _) do
+    case StripeApi.create_customer_portal_session(stripe_id) do
+      {:ok, session} ->
+        {:ok, %{url: session.url, message: "success!"}}
+
+      {:error, _} ->
+        {:error, %{url: nil, message: "문제가 발생했습니다. 잠시후 다시 시도하세요"}}
+    end
+  end
 end

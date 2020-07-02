@@ -8,6 +8,8 @@ defmodule ChurchApp.Accounts.User do
     field :password, Comeonin.Ecto.Password
     field :phone_number, :string
     field :admin, :boolean
+    field :subscribed, :boolean, default: false
+    field :stripe_id, :string
 
     has_one :church, ChurchApp.Accounts.Church, on_delete: :delete_all
 
@@ -17,7 +19,7 @@ defmodule ChurchApp.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :email, :password, :phone_number, :admin])
+    |> cast(attrs, [:name, :email, :password, :phone_number, :admin, :subscribed, :stripe_id])
     |> unique_constraint(:email)
     |> validate_required([:name, :email, :password])
     |> validate_email_format()

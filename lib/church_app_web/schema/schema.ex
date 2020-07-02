@@ -91,6 +91,13 @@ defmodule ChurchAppWeb.Schema do
       resolve(&Resolvers.Admin.update_key_info/3)
     end
 
+    @desc "Create stripe portal session redirect url"
+    field :create_stripe_redirect_url, :stripe_redirect_response do
+      arg(:stripe_id, :string)
+
+      resolve(&Resolvers.StripeResolver.create_stripe_redirect_url/3)
+    end
+
     @desc "Change Church's active state"
     field :change_active_state, :normal_response do
       arg(:church_id, :string)
@@ -334,6 +341,11 @@ defmodule ChurchAppWeb.Schema do
 
   object :normal_response do
     field :success, :boolean
+    field :message, :string
+  end
+
+  object :stripe_redirect_response do
+    field :url, :string
     field :message, :string
   end
 

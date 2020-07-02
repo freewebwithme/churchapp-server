@@ -8,8 +8,7 @@ defmodule ChurchApp.Accounts do
 
   alias ChurchApp.Accounts.Church
   alias ChurchApp.Accounts.{User, StripeUser, Employee, News}
-  alias ChurchApp.Utility
-  alias ChurchApp.Videos
+  alias ChurchApp.{Utility, Videos}
 
   alias ChurchApp.Api.StripeApi
 
@@ -243,6 +242,15 @@ defmodule ChurchApp.Accounts do
   end
 
   def create_user(attrs \\ %{}) do
+    # When user signs up, create stripe id too
+    # Get master api key
+    master_api_key = System.get_env("MASTER_STRIPE_API_KEY")
+    %{email: email} = attrs
+    {:ok, customer} = StripeApi.create_user(email, master_api_key)
+
+    # Add stripe user id to attrs
+    attrs = Map.put(attrs, :stripe_id, customer.id)
+
     %User{}
     |> User.changeset(attrs)
     # I need to set church to nil or not,
