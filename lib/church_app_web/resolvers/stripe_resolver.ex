@@ -33,7 +33,9 @@ defmodule ChurchAppWeb.Resolvers.StripeResolver do
       {:ok, session} ->
         {:ok, %{url: session.url, message: "success!"}}
 
-      {:error, _} ->
+      {:error, response} ->
+        IO.puts("Printing stripe customer portal error")
+        IO.inspect(response)
         {:error, %{url: nil, message: "문제가 발생했습니다. 잠시후 다시 시도하세요"}}
     end
   end

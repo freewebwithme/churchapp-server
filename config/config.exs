@@ -27,6 +27,8 @@ config :church_app, ChurchApp.Mailer,
   # {:system, "MAILGUN_BASE_URI"}
   base_uri: System.get_env("MAILGUN_BASE_URI")
 
+# config :stripity_stripe, api_key: fn -> System.get_env("MASTER_STRIPE_API_KEY") end
+
 config :ex_aws,
   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role],

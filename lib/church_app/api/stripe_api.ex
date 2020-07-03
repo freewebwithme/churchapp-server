@@ -30,8 +30,9 @@ defmodule ChurchApp.Api.StripeApi do
   }}
   """
   def create_customer_portal_session(stripe_id) do
-    master_api_key = System.get_env("MASTER_STRIPE_API_KEY")
-    Session.create(%{customer: stripe_id}, api_key: master_api_key)
+    # master_api_key = System.get_env("MASTER_STRIPE_API_KEY")
+    # Session.create(%{customer: stripe_id}, api_key: master_api_key)
+    Session.create(%{customer: stripe_id})
   end
 
   def confirm_payment(amount, payment_method_id, email, church_id) do
