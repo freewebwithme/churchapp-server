@@ -269,6 +269,10 @@ defmodule ChurchApp.Accounts do
     Repo.get_by(User, email: email)
   end
 
+  def get_user_by_stripe_id(stripe_id) do
+    Repo.get_by(User, stripe_id: stripe_id)
+  end
+
   def update_user(%User{} = user, attrs \\ %{}) do
     user
     |> User.changeset(attrs)

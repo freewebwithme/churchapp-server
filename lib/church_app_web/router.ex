@@ -39,6 +39,9 @@ defmodule ChurchAppWeb.Router do
 
     get "/youtube", YoutubeController, :subscribe_confirm
     post "/youtube", YoutubeController, :handle_upload_notification
+
+    post "/stripe/subscription-created", StripeWebhookController, :subscription_created
+    post "/stripe/subscription-deleted", StripeWebhookController, :subscription_deleted
   end
 
   scope "/profile-image", ChurchAppWeb do
