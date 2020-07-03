@@ -6,8 +6,6 @@ defmodule ChurchAppWeb.StripeWebhookController do
   alias ChurchApp.Accounts
 
   def subscription_created(conn, params) do
-    IO.puts("Printing from subscription_created")
-    IO.inspect(params)
     %{"data" => %{"object" => %{"customer" => stripe_id}}} = params
     user = Accounts.get_user_by_stripe_id(stripe_id)
     Accounts.update_user(user, %{subscribed: true})
