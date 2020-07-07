@@ -270,7 +270,7 @@ defmodule ChurchApp.Accounts do
   end
 
   def get_user_by_stripe_id(stripe_id) do
-    Repo.get_by(User, stripe_id: stripe_id)
+    Repo.get_by(User, stripe_id: stripe_id) |> Repo.preload(:church)
   end
 
   def update_user(%User{} = user, attrs \\ %{}) do

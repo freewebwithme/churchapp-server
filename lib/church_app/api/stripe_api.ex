@@ -1,7 +1,11 @@
 defmodule ChurchApp.Api.StripeApi do
-  alias Stripe.{Customer, PaymentIntent, BillingPortal.Session}
+  alias Stripe.{Customer, PaymentIntent, BillingPortal.Session, Subscription}
   alias ChurchApp.Accounts
   alias ChurchApp.Accounts.StripeUser
+
+  defp get_api_key() do
+    System.get_env("MASTER_STRIPE_API_KEY")
+  end
 
   @doc """
   This function is used for each user's stripe account.
@@ -30,9 +34,29 @@ defmodule ChurchApp.Api.StripeApi do
   }}
   """
   def create_customer_portal_session(stripe_id) do
-    # master_api_key = System.get_env("MASTER_STRIPE_API_KEY")
-    # Session.create(%{customer: stripe_id}, api_key: master_api_key)
-    Session.create(%{customer: stripe_id})
+    master_api_key = get_api_key()
+    Session.create(%{customer: stripe_id}, api_key: master_api_key)
+  end
+
+  @doc """
+  Get a subscription
+  """
+  def get_subscription_info(subscription_id) do
+    master_api_key = get_api_key()
+    Subscription.retrieve(%{id: subscription_id}, api_key: master_api_key)
+  end
+
+  @doc """
+  Update subscription
+  """
+  def update_subscription(subscription_id, sub_item_id, price_id) do
+    master_api_key = get_api_key()
+
+    Subscription.update(
+      subscription_id,
+      %{items: [%{id: sub_item_id, price: price_id}], proration_behavior: "none"},
+      api_key: master_api_key
+    )
   end
 
   def confirm_payment(amount, payment_method_id, email, church_id) do

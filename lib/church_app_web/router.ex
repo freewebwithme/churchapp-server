@@ -42,6 +42,7 @@ defmodule ChurchAppWeb.Router do
 
     post "/stripe/subscription-created", StripeWebhookController, :subscription_created
     post "/stripe/subscription-deleted", StripeWebhookController, :subscription_deleted
+    post "/stripe/invoice-upcoming", StripeWebhookController, :invoice_upcoming
   end
 
   scope "/profile-image", ChurchAppWeb do

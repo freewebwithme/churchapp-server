@@ -46,6 +46,7 @@ IEx.configure(
 alias ChurchApp.Repo
 alias GoogleApi.YouTube.V3.Api
 alias GoogleApi.YouTube.V3.Connection
+alias Stripe.{Customer, Subscription}
 alias ChurchApp.Api.YoutubeApi
 alias ChurchApp.Youtube
 alias ChurchApp.Videos.LatestVideos

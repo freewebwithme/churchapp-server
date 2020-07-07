@@ -2,6 +2,7 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
   use Absinthe.Schema.Notation
   alias ChurchApp.{Accounts, Utility}
 
+  import_types(Absinthe.Type.Custom)
   import Absinthe.Resolution.Helpers, only: [on_load: 2, dataloader: 1]
 
   object :user do
@@ -12,6 +13,8 @@ defmodule ChurchAppWeb.Schema.AccountTypes do
     field :admin, :boolean
     field :subscribed, :boolean
     field :stripe_id, :string
+    field :subscription_id, :string
+    field :current_period_end, :datetime
     field :church, :church
   end
 
